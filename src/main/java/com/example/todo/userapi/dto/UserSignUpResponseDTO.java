@@ -6,7 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Setter @Getter
 @ToString @EqualsAndHashCode(of = "email")
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -18,11 +18,10 @@ public class UserSignUpResponseDTO {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime joinDate;
-    public UserSignUpResponseDTO(User user) {
 
+    public UserSignUpResponseDTO(User user) {
         this.email = user.getEmail();
         this.userName = user.getUserName();
         this.joinDate = user.getJoinDate();
-
     }
 }
