@@ -11,9 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TodoLIstResponseDTO {
+public class TodoListResponseDTO {
 
-    private String error; // 에러 발생 시 에러 메세지를 담을 필드
+    private String error; //에러 발생 시 에러 메세지를 담을 필드
     private List<TodoDetailResponseDTO> todos;
 
 }
+

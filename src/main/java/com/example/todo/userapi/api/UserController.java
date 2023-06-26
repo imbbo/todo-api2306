@@ -67,7 +67,7 @@ public class UserController {
     }
 
     //로그인 요청 처리
-    @PostMapping("/signin")
+    @PostMapping("/login")
     public ResponseEntity<?> signIn(
             @Validated @RequestBody LoginRequestDTO dto
     ) {
