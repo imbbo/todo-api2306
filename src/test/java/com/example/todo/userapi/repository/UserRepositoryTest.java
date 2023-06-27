@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -23,7 +22,7 @@ class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    @DisplayName("회원가입 테스트")
+    @DisplayName("회원 가입 테스트")
     void saveTest() {
         //given
         User newUser = User.builder()
@@ -33,19 +32,20 @@ class UserRepositoryTest {
                 .build();
         //when
         User saved = userRepository.save(newUser);
+
         //then
         assertNotNull(saved);
     }
-
+    
     @Test
     @DisplayName("이메일로 회원 조회하기")
     void findEmailTest() {
         //given
         String email = "abc1234@abc.com";
         //when
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<User> userOptional
+                = userRepository.findByEmail(email);
         //then
-
         assertTrue(userOptional.isPresent());
         User user = userOptional.get();
         assertEquals("춘식이", user.getUserName());
@@ -53,9 +53,8 @@ class UserRepositoryTest {
         System.out.println("\n\n\n");
         System.out.println("user = " + user);
         System.out.println("\n\n\n");
-
     }
-
+    
     @Test
     @DisplayName("이메일 중복체크를 하면 중복값이 false여야 한다.")
     void emailFalse() {
@@ -69,4 +68,17 @@ class UserRepositoryTest {
 
 
 
+
 }
+
+
+
+
+
+
+
+
+
+
+
+

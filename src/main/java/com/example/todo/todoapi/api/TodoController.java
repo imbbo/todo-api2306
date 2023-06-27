@@ -7,6 +7,7 @@ import com.example.todo.todoapi.dto.response.TodoListResponseDTO;
 import com.example.todo.todoapi.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -39,15 +40,22 @@ public class TodoController {
         }
 
         try {
-            TodoListResponseDTO responseDTO = todoService.create(requestDTO, userInfo.getUserId());
+            TodoListResponseDTO responseDTO = todoService.create(requestDTO, userInfo);
             return ResponseEntity
                     .ok()
                     .body(responseDTO);
+        } catch (IllegalStateException e) {
+            // 권한 떄문에 발생한 예외
+            log.warn(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getMessage());
         } catch (RuntimeException e) {
             log.error(e.getMessage());
+
             return ResponseEntity
                     .internalServerError()
                     .body(TodoListResponseDTO.builder().error(e.getMessage()));
+
         }
     }
 
@@ -81,7 +89,7 @@ public class TodoController {
     public ResponseEntity<?> retrieveTodoList(
             // 토큰에 인증된 사용자 정보를 불러올 수 있음.
             @AuthenticationPrincipal TokenUserInfo userInfo
-    ) {
+            ) {
         log.info("/api/todos GET request");
         TodoListResponseDTO responseDTO = todoService.retrieve(userInfo.getUserId());
 
@@ -106,7 +114,7 @@ public class TodoController {
         log.info("modifying dto: {}", requestDTO);
 
         try {
-            TodoListResponseDTO responseDTO = todoService.update(requestDTO,userInfo.getUserId());
+            TodoListResponseDTO responseDTO = todoService.update(requestDTO, userInfo.getUserId());
             return ResponseEntity.ok().body(responseDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError()

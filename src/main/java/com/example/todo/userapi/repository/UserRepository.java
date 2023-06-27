@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface UserRepository
-        extends JpaRepository<User, String> {
+    extends JpaRepository<User, String> {
 
     //쿼리 메서드
 
@@ -19,3 +19,11 @@ public interface UserRepository
     boolean existsByEmail(String email);
 
 }
+
+
+
+
+
+
+
+
