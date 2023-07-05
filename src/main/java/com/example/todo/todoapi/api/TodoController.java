@@ -45,17 +45,15 @@ public class TodoController {
                     .ok()
                     .body(responseDTO);
         } catch (IllegalStateException e) {
-            // 권한 떄문에 발생한 예외
+            // 권한 때문에 발생한 예외.
             log.warn(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(e.getMessage());
         } catch (RuntimeException e) {
             log.error(e.getMessage());
-
             return ResponseEntity
                     .internalServerError()
                     .body(TodoListResponseDTO.builder().error(e.getMessage()));
-
         }
     }
 

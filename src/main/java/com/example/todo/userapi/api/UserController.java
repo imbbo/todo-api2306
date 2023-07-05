@@ -71,8 +71,8 @@ public class UserController {
             }
 
 
-            UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
-            return ResponseEntity.ok()
+           UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
+           return ResponseEntity.ok()
                     .body(responseDTO);
 
         } catch (NoRegisteredArgumentsException e) {
@@ -114,7 +114,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_COMMON')")
     public ResponseEntity<?> promote(
             @AuthenticationPrincipal TokenUserInfo userInfo
-    ) {
+            ) {
         log.info("/api/auth/promote - PUT!");
 
         try {
@@ -138,33 +138,31 @@ public class UserController {
     public ResponseEntity<?> loadFile(
             @AuthenticationPrincipal TokenUserInfo userInfo
     ) {
-
         log.info("/api/auth/load-profile - GET!, user: {}", userInfo.getEmail());
 
         try {
-            // 클라이언트가 요청한 프로필 사진을 응답해야 함
-            // 1. 프로필 사진의 경로를 얻어야 함.
-            String filePath = userService.findProfilePath(userInfo.getUserId());
+            //클라이언트가 요청한 프로필 사진을 응답해야 함.
+            //1. 프로필 사진의 경로를 얻어야 함.
+            String filePath
+                    = userService.findProfilePath(userInfo.getUserId());
 
-            // 2. 얻어낸 파일 경로르 통해서 실제 파일 데이터 로드하기
+            //2. 얻어낸 파일 경로를 통해서 실제 파일 데이터 로드하기
             File profileFile = new File(filePath);
 
-            if(!profileFile.exists()) {
+            if (!profileFile.exists()) {
                 return ResponseEntity.notFound().build();
             }
 
             // 해당 경로에 저장된 파일을 바이트배열로 직렬화 해서 리턴
             byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
 
-            // 3. 응답 헤더에 컨텐츠 타입을 설정.
+            //3. 응답 헤더에 컨턴츠 타입을 설정.
             HttpHeaders headers = new HttpHeaders();
             MediaType contentType = findExtensionAndGetMediaType(filePath);
-
-            if (contentType == null) {
+            if(contentType == null) {
                 return ResponseEntity.internalServerError()
                         .body("발견된 파일은 이미지 파일이 아닙니다.");
             }
-
             headers.setContentType(contentType);
 
             return ResponseEntity.ok()
@@ -182,15 +180,16 @@ public class UserController {
     private MediaType findExtensionAndGetMediaType(String filePath) {
 
         // 파일 경로에서 확장자 추출하기
-        // C:/todo_upload/ abcabcabc_abc.jpg
-        String ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+        // C:/todo_upload/asjkldlkaslkdjc_abc.jpg
+        String ext
+                = filePath.substring(filePath.lastIndexOf(".") + 1);
 
         switch (ext.toUpperCase()) {
-            case "JPG" : case "JPEG" :
+            case "JPG": case "JPEG":
                 return MediaType.IMAGE_JPEG;
-            case "PNG" :
+            case "PNG":
                 return MediaType.IMAGE_PNG;
-            case "GIF" :
+            case "GIF":
                 return MediaType.IMAGE_GIF;
             default:
                 return null;
@@ -198,5 +197,32 @@ public class UserController {
 
     }
 
+    // S3에서 불러온 프로필 사진 처리
+    @GetMapping("/load-s3")
+    public ResponseEntity<?> loadS3(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
+        log.info("/api/auth/load-s3 GET - user: {}", userInfo);
+
+        try {
+            String profilePath = userService.findProfilePath(userInfo.getUserId());
+            return ResponseEntity.ok().body(profilePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+

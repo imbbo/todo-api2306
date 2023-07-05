@@ -42,10 +42,12 @@ public class User {
 
     private String profileImg;
 
+
     // 등급 수정 메서드
     public void changeRole(Role role) {
         this.role = role;
     }
+
 
 }
 

@@ -78,13 +78,13 @@ public class TodoService {
         User foundUser = getUser(userInfo.getUserId());
 
         // 권한에 따른 글쓰기 제한 처리
-        // 일반회원이 일정을 5개를 초고하해서 작성하면 예외를 발생
-        if(userInfo.getRole() == Role.COMMON && todoRepository.countByUser(foundUser) >= 5) {
-            throw new IllegalStateException("일환회원은 더 이상 일정을 작성할 수 없습니다.");
+        // 일반회원이 일정을 5개 초과해서 작성하면 예외를 발생
+        if(userInfo.getRole() == Role.COMMON
+            && todoRepository.countByUser(foundUser) >= 5) {
+            throw new IllegalStateException("일반회원은 더 이상 일정을 작성할 수 없습니다.");
         }
 
         Todo todo = requestDTO.toEntity(foundUser);
-
 
         todoRepository.save(todo);
         log.info("할 일 저장 완료! 제목: {}", requestDTO.getTitle());
